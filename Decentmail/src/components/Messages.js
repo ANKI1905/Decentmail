@@ -2,8 +2,9 @@ import { MessageSharp } from "@material-ui/icons";
 import React from "react";
 import ReactDOM from "react-dom";
 import "/home/ankita/Documents/Decentmail/node_modules/bootstrap/dist/css/bootstrap.min.css";
-import Modal from "./Modal";
-
+import web3 from './web3';
+import ipfs from './ipfs';
+import contract from './contract';
 import "./styles.css";
 
 class Messages extends React.Component {
@@ -11,84 +12,82 @@ class Messages extends React.Component {
     super(props);
 
     this.state = {
-      modal: false,
-      name: "",
-      modalInputName: ""
+      messages :[], 
+      sender :''
     };
+    this.handleClick = this.handleClick.bind(this);
   }
 
-  handleChange(e) {
-    const target = e.target;
-    const name = target.name;
-    const value = target.value;
-
-    this.setState({
-      [name]: value
-    });
+  async componentDidMount(){
+    await this.getAccount();
+    await this.getMessages();
+    //await this.displayMessage();
+    console.log(this.state.messages);
+    console.log(this.state.messages[0][0]);
   }
 
-  handleSubmit(e) {
-    this.setState({ name: this.state.modalInputName });
-    this.modalClose();
+  async getMessages(){
+    var result = await contract.methods.getMyInboxSize().call()
+    
+      console.log(result);
+      for(var i = result - 1; i >= 0; i--){
+        var message = await contract.methods.receiveMessages(i).call()
+          this.setState({messages:this.state.messages.concat(message)});
+          console.log(message);
+        }
   }
+   
+  handleClick(e){
+    var index = e.target.value;
+    console.log(index);
+    this.getData(this.state.messages[index][0]);
+    
+  }
+   
+  async getData(hash){
+    await  ipfs.files.cat(hash, (err, res) => {
+      console.log(res);
+      console.log(res.toString('utf-8'))
+  });
+}
+  
 
-  modalOpen() {
-    this.setState({ modal: true });
-  }
-
-  modalClose() {
-    this.setState({
-      modalInputName: "",
-      modal: false
-    });
-  }
+  async getAccount(){
+    const accounts = await web3.eth.getAccounts();
+    this.setState({sender : accounts[0]});
+    web3.eth.defaultAccount = accounts[0];
+    contract.defaultAccount = accounts[0];
+    console.log(accounts[0]);
+}
 
   render() {
     return (
-      <div className="Messages">
-        <h1>Hello!! {this.state.name}</h1>
-        <button><a href="javascript:;" onClick={e => this.modalOpen(e)}>
-          Compose
-        </a></button>
-        <Modal show={this.state.modal} handleClose={e => this.modalClose(e)}>
-        <form >
-      <h1>Create Account</h1>
-
-      <label>
-        Email:
-        <input
-          name="email"
-          type="email"
-         // value={}
-         // onChange={e => setEmail(e.target.value)}
-          required />
-      </label>
-
-      <label>
-        Password:
-        <input
-          name="password"
-          type="password"
-          //value={}
-         // onChange={e => setPassword(e.target.value)}
-          required />
-      </label>
-
-      
-
-      <label>
-        <input
-          name="acceptedTerms"
-          type="checkbox"
-         // onChange={e => setAcceptedTerms(e.target.value)}
-          required />
-        I accept the terms of service
-      </label>
-
-      <button>Submit</button>
-    </form>
-        </Modal>
-      </div>
+      <div> 
+       <table>
+      <thead>
+        <tr>
+          <th>From</th>
+          <th>Subject</th>
+          <th>Time</th>
+          <th></th>
+         
+        </tr>
+      </thead>
+      <tbody>
+        { (this.state.messages.length > 0) ? this.state.messages.map( (message, index) => {
+           return (
+            <tr key={ index }>
+              <td>{ message[3] }</td>
+              <td>{ message[0] }</td>
+              <td>{ message[2]}</td>
+              <td>{<button value = {index} onClick = {this.handleClick} >Open</button>}</td>
+              
+            </tr>
+          )
+         }) : <tr><td colSpan="5">Loading...</td></tr> }
+      </tbody>
+    </table>
+       </div>
     );
   }
 }
