@@ -7,14 +7,13 @@ import ipfs from './ipfs';
 import contract from './contract';
 import "./styles.css";
 
-class Messages extends React.Component {
+class Sentmessages extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       messages :[], 
-      sender :'',
-      open : false
+      sender :''
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -28,12 +27,12 @@ class Messages extends React.Component {
   }
 
   async getMessages(){
-    var result = await contract.methods.getMyInboxSize().call()
+    var result = await contract.methods.getMySentSize().call()
     
       console.log(result);
       if(result > 0){
       for(var i = result - 1; i >= 0; i--){
-        var message = await contract.methods.receiveMessages(i).call()
+        var message = await contract.methods.sentMessages(i).call()
           this.setState({messages:this.state.messages.concat(message)});
           console.log(message);
         }
@@ -95,4 +94,4 @@ class Messages extends React.Component {
   }
 }
 
-export default Messages;
+export default Sentmessages;

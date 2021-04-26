@@ -6,9 +6,9 @@ import Sidebar from './Sidebar';
 class Home extends Component{
     render(){
         return (
-            <div>
-            <Sidebar/>
-            <div>
+            <div className = "row">
+              <div class="col-sm-3">  <Sidebar/> </div>
+              <div class = "col-sm-9">
                 <Header/>
                 <Messages/>
             </div>

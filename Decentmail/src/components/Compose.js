@@ -5,6 +5,9 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 import ipfs from './ipfs';
 import contract from './contract';
+import {Grid} from 'semantic-ui-react';
+
+
 //const IPFS = require('ipfs-core')
 
 class Compose extends Component{
@@ -81,11 +84,11 @@ class Compose extends Component{
     }
    handleSubmit(event) {
       event.preventDefault();
-      var encrBuff = Buffer.from(this.state.subject + this.state.message);
+      var encrBuff = Buffer.from(this.state.message);
       ipfs.files.add(encrBuff, async (err, ipfsHash) => {
         this.setState({hash : ipfsHash[0].hash})
         console.log(err, "ipfsHash:: " + ipfsHash[0].hash);
-        contract.methods.sendMessage(this.state.receiver, ipfsHash[0].hash, "passwoerd").send({from : contract.defaultAccount}, function(error, result){
+        contract.methods.sendMessage(this.state.receiver, this.state.subject, ipfsHash[0].hash, "passwoerd").send({from : contract.defaultAccount}, function(error, result){
           console.log(result);
           alert("Sent");
 
@@ -104,10 +107,13 @@ class Compose extends Component{
      
     render(){
         return(
-            <div>
-        
-            <Header/>
-            <div>
+            
+          <div className = "row">
+              <div class="col-sm-3">  <Sidebar/> </div>
+                
+                <div class = "col-sm-9">
+                 <Header/>
+            
                     <h5>New Email</h5>
                   <form onSubmit={this.handleSubmit}>
                     <label>
@@ -132,8 +138,9 @@ class Compose extends Component{
                     </label><br/>
                     <input type="submit" value="Submit" />
                   </form>
-            </div> 
-            </div>  
+                  </div>
+                  </div>
+                   
 
         )
     }

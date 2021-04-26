@@ -3,6 +3,7 @@ pragma solidity ^0.5.0;
 contract DecentMail{
   struct Message {
     address sender;
+    string subject;
     string hash;
     string key;
     uint timestamp;
@@ -60,8 +61,9 @@ contract DecentMail{
     return (contractProperties.User, contractProperties.registeredUsersAddress);
   }
 
-  function sendMessage(address _receiver,  string memory  _hash,  string memory _key) public {
+  function sendMessage(address _receiver, string memory subject, string memory  _hash,  string memory _key) public {
     newMessage.hash = _hash;
+    newMessage.subject = subject;
     newMessage.key = _key;
     newMessage.timestamp = now;
     newMessage.sender = msg.sender;
@@ -80,20 +82,20 @@ contract DecentMail{
   
  
 
-  function receiveMessages(uint index) public view returns ( string memory,  string memory, uint, address) {
+  function receiveMessages(uint index) public view returns ( string memory,  string memory, uint, address, string memory) {
     Inbox storage receiversInbox = userInboxes[msg.sender];
   
     Message memory message = receiversInbox.receivedMessages[index];
       
-    return (message.hash, message.key, message.timestamp, message.sender);
+    return (message.hash,  message.key, message.timestamp, message.sender, message.subject);
   }
 
-    function sentMessages(uint index) public view returns ( string memory, string memory, uint, address) {
+    function sentMessages(uint index) public view returns ( string memory, string memory, uint, address, string memory) {
     Sentbox storage sendermessages = userSentboxes[msg.sender];
   
     Message memory message = sendermessages.sentMessages[index];
       
-    return (message.hash, message.key, message.timestamp, message.receiver);
+    return (message.hash, message.key, message.timestamp, message.receiver, message.subject);
   }
  
       
