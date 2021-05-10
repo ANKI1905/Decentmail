@@ -1,6 +1,5 @@
-import { MessageSharp } from "@material-ui/icons";
 import React from "react";
-import ReactDOM from "react-dom";
+import Table from 'react-bootstrap/Table'
 import "/home/ankita/Documents/Decentmail/node_modules/bootstrap/dist/css/bootstrap.min.css";
 import web3 from './web3';
 import ipfs from './ipfs';
@@ -65,7 +64,7 @@ class Sentmessages extends React.Component {
   render() {
     return (
       <div> 
-       <table>
+       <Table responsive="sm">
       <thead>
         <tr>
           <th>From</th>
@@ -88,7 +87,7 @@ class Sentmessages extends React.Component {
           )
          }) : <tr><td colSpan="5">Loading...</td></tr> }
       </tbody>
-    </table>
+    </Table>
        </div>
     );
   }
