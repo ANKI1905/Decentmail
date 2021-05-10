@@ -14,7 +14,7 @@ class Messages extends React.Component {
       messages :[], 
       sender :'',
       open : false,
-      messagepop: 'hello',
+      messagepop: '',
     };
     this.handleClose = this.handleClose.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -44,6 +44,7 @@ class Messages extends React.Component {
   }
   handleClose(e){
     this.setState({open:false});
+    this.setState({messagepop:""})
   }
 
   handleClick = async(event)  => {
@@ -108,9 +109,16 @@ class Messages extends React.Component {
     </Table>
     <Modal show={this.state.open} onHide={this.handleClose} animation={false} data = {this.state.messagepop}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Mail</Modal.Title>
         </Modal.Header>
-        <Modal.Body>{this.props.data}</Modal.Body>
+        <Modal.Body>{this.state.messagepop.split('\n').map(function(item, key) {
+  return (
+    <span key={key}>
+      {item}
+      <br/>
+    </span>
+  )
+})}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={this.handleClose}>
             Close
