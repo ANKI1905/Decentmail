@@ -1,6 +1,6 @@
 import React from "react";
 import "/home/ankita/Documents/Decentmail/node_modules/bootstrap/dist/css/bootstrap.min.css";
-import Table from 'react-bootstrap/Table'
+import {Table, Modal, Button} from 'react-bootstrap';
 import web3 from './web3';
 import ipfs from './ipfs';
 import contract from './contract';
@@ -13,9 +13,13 @@ class Messages extends React.Component {
     this.state = {
       messages :[], 
       sender :'',
-      open : false
+      open : false,
+      messagepop: 'hello',
     };
+    this.handleClose = this.handleClose.bind(this);
     this.handleClick = this.handleClick.bind(this);
+
+  
   }
 
   async componentDidMount(){
@@ -38,20 +42,32 @@ class Messages extends React.Component {
         }
       }
   }
-   
-  handleClick(e){
-    var index = e.target.value;
+  handleClose(e){
+    this.setState({open:false});
+  }
+
+  handleClick = async(event)  => {
+    event.preventDefault();
+    var index = event.target.value;
+    this.setState({open : true});
     console.log(index);
-    this.getData(this.state.messages[index][0]);
-    
+    var hash = this.state.messages[index][0];
+    const result = await ipfs.files.cat(hash);
+    console.log(result.toString('utf-8'));
+    this.setState({messagepop:result.toString('utf-8')});
+    console.log(this.state.messagepop);
   }
    
+
   async getData(hash){
     await  ipfs.files.cat(hash, (err, res) => {
       console.log(res);
-      console.log(res.toString('utf-8'))
-  });
+      console.log(res.toString('utf-8'));
+     
+    });
 }
+
+
   
 
   async getAccount(){
@@ -90,6 +106,19 @@ class Messages extends React.Component {
          }) : <tr><td colSpan="5">Loading...</td></tr> }
       </tbody>
     </Table>
+    <Modal show={this.state.open} onHide={this.handleClose} animation={false} data = {this.state.messagepop}>
+        <Modal.Header closeButton>
+          <Modal.Title>Modal heading</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{this.props.data}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={this.handleClose}>
+            Close
+          </Button>
+          
+        </Modal.Footer>
+      </Modal>
+
        </div>
     );
   }

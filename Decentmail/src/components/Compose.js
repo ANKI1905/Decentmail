@@ -5,8 +5,7 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 import ipfs from './ipfs';
 import contract from './contract';
-import {Grid} from 'semantic-ui-react';
-
+import {Form, Row, Col, Button, Badge}from 'react-bootstrap';
 
 //const IPFS = require('ipfs-core')
 
@@ -113,31 +112,37 @@ class Compose extends Component{
                 
                 <div class = "col-sm-9">
                  <Header/>
-            
-                    <h5>New Email</h5>
-                  <form onSubmit={this.handleSubmit}>
-                    <label>
-                      To:
-                      <input type="text" name = "receiver" value={this.state.receiver} onChange={this.handleChange} />
-                    </label><br/>
+                 <h4><Badge variant="light">New Email</Badge></h4>
+                 <Form>
+                  <Form.Group as={Row} controlId="formHorizontalEmail">
+                    <Form.Label column sm={2}>
+                      To
+                    </Form.Label>
+                    <Col sm={10}>
+                      <Form.Control type="text" placeholder="Address" name = "receiver" onChange = {this.handleChange} />
+                    </Col>
+                  </Form.Group>
 
-                    <label>
-                      Cc:
-                      <input type="text" name = "cc" value={this.state.cc} onChange={this.handleChange} />
-                    </label><br/>
-
-                    <label>
-                      Subject:
-                      <input type="text" name = "subject" value={this.state.subject} onChange={this.handleChange} />
-                    </label><br/>
-
-                    <label>
-                      Message:
-                      <textarea value={this.state.message} name = "message" onChange={this.handleChange} />
-                      
-                    </label><br/>
-                    <input type="submit" value="Submit" />
-                  </form>
+                  <Form.Group as={Row} controlId="formHorizontalPassword">
+                    <Form.Label column sm={2}>
+                      Subject
+                    </Form.Label>
+                    <Col sm={10}>
+                      <Form.Control type="text" placeholder="Subject"  name = "subject" onChange = {this.handleChange}/>
+                    </Col>
+                  </Form.Group>
+                   
+                  <Form.Group  as={Row} controlId="exampleForm.ControlTextarea1">
+                    <Form.Label column sm={2}>Message</Form.Label>
+                    <Col sm = {10}>
+                    <Form.Control as="textarea" name = "message" value = {this.state.message} onChange= {this.handleChange}rows={5}/>
+                   </Col>
+                  </Form.Group>
+                  <Button variant="primary" type="submit" onClick = {this.handleSubmit}>
+                    Send
+                  </Button>
+                  </Form>
+                   
                   </div>
                   </div>
                    
