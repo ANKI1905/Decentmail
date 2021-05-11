@@ -2,18 +2,68 @@ import Web3 from 'web3';
 import web3 from './web3';
 
 
-const address = '0xF668B1dd7e5F2f684b9AB558bB51A85D57357F58';
+const address = '0xf625A078fbf29F4D87c6B7D8c40c422F7232d43d';
 const abi = [
   {
-    "inputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "email",
+        "type": "string"
+      }
+    ],
+    "name": "registerUserEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "_hash",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "_key",
+        "type": "string"
+      }
+    ],
+    "name": "sendMessageEvent",
+    "type": "event"
   },
   {
     "constant": true,
-    "inputs": [],
-    "name": "checkUserRegistration",
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "email",
+        "type": "string"
+      }
+    ],
+    "name": "checkRegistration",
     "outputs": [
       {
         "internalType": "bool",
@@ -26,8 +76,50 @@ const abi = [
     "type": "function"
   },
   {
-    "constant": false,
+    "constant": true,
     "inputs": [],
+    "name": "getMail",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "email",
+        "type": "string"
+      }
+    ],
+    "name": "getAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "email",
+        "type": "string"
+      }
+    ],
     "name": "registerUser",
     "outputs": [],
     "payable": false,
@@ -61,11 +153,6 @@ const abi = [
         "internalType": "address",
         "name": "_receiver",
         "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "subject",
-        "type": "string"
       },
       {
         "internalType": "string",
@@ -114,11 +201,6 @@ const abi = [
         "internalType": "address",
         "name": "",
         "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
       }
     ],
     "payable": false,
@@ -155,11 +237,6 @@ const abi = [
         "internalType": "address",
         "name": "",
         "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
       }
     ],
     "payable": false,

@@ -29,9 +29,10 @@ class Compose extends Component{
     }
     
     async checkRegistration(){
-      contract.methods.checkUserRegistration().call(function(error, result){
-          if(result == false){
-            contract.methods.registerUser().send({from : contract.defaultAccount},  function(error, result){
+      contract.methods.checkRegistration("helo").call(function(error, result){
+          if(error)
+          {
+            contract.methods.registerUser("ankitamvaid12@gmail.com").send({from : contract.defaultAccount},  function(error, result){
               if(!error) 
                 alert("User registered successfully")
               else
