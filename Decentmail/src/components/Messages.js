@@ -1,9 +1,9 @@
 import React from "react";
 import "/home/ankita/Documents/Decentmail/node_modules/bootstrap/dist/css/bootstrap.min.css";
 import {Table, Modal, Button} from 'react-bootstrap';
-import web3 from './web3';
-import ipfs from './ipfs';
-import contract from './contract';
+import web3 from '../utils/web3';
+import ipfs from '../utils/ipfs';
+import contract from '../utils/contract';
 import "./styles.css";
 
 class Messages extends React.Component {
@@ -18,30 +18,27 @@ class Messages extends React.Component {
     };
     this.handleClose = this.handleClose.bind(this);
     this.handleClick = this.handleClick.bind(this);
-
-  
   }
 
   async componentDidMount(){
     await this.getAccount();
     await this.getMessages();
-    //await this.displayMessage();
-    console.log(this.state.messages);
    
   }
 
   async getMessages(){
     var result = await contract.methods.getMyInboxSize().call()
     
-      console.log(result);
-      if(result > 0){
-      for(var i = result - 1; i >= 0; i--){
+    console.log(result);
+    if(result > 0){
+      for(var i = result - 1 ; i >= 0 ; i--){
         var message = await contract.methods.receiveMessages(i).call()
           this.setState({messages:this.state.messages.concat(message)});
           console.log(message);
-        }
       }
+    }
   }
+
   handleClose(e){
     this.setState({open:false});
     this.setState({messagepop:""})
