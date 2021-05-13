@@ -4,6 +4,7 @@ contract DecentMail{
   event registerUserEvent(address indexed from, string email);
   struct Message {
     address sender;
+    string subject;
     string hash;
     string key;
     uint timestamp;
@@ -65,14 +66,14 @@ contract DecentMail{
   function getContractProperties() public view returns (address, address[] memory ) {
     return (contractProperties.User, contractProperties.registeredUsersAddress);
   }
-  function sendMessage(address _receiver,  string memory  _hash,  string memory _key) public {
+  function sendMessage(address _receiver,  string memory _subject, string memory  _hash,  string memory _key) public {
     require(mailId[_receiver].isRegistered == true);
     newMessage.hash = _hash;
     newMessage.key = _key;
     newMessage.timestamp = now;
     newMessage.sender = msg.sender;
     newMessage.receiver = _receiver;
-   
+    newMessage.subject = _subject;
     Sentbox storage sendermessages = userSentboxes[msg.sender];
     sendermessages.sentMessages[sendermessages.numSentMessages] = newMessage;
     sendermessages.numSentMessages++;
@@ -82,17 +83,17 @@ contract DecentMail{
     
     emit sendMessageEvent(msg.sender, _receiver, _hash, _key);
   }
-  function receiveMessages(uint index) public view returns ( string memory,  string memory, uint, address) {
+  function receiveMessages(uint index) public view returns ( string memory,  string memory, uint, address, string memory) {
     require (index >= 0);
     Inbox storage receiversInbox = userInboxes[msg.sender];
     Message memory message = receiversInbox.receivedMessages[index];
-    return (message.hash, message.key, message.timestamp, message.sender);
+    return (message.hash, message.key, message.timestamp, message.sender, message.subject);
   }
-  function sentMessages(uint index) public view returns ( string memory, string memory, uint, address) {
+  function sentMessages(uint index) public view returns ( string memory, string memory, uint, address, string memory) {
     require(index >= 0);
     Sentbox storage sendermessages = userSentboxes[msg.sender];
     Message memory message = sendermessages.sentMessages[index];
-    return (message.hash, message.key, message.timestamp, message.receiver);
+    return (message.hash, message.key, message.timestamp, message.receiver, message.subject);
   }
   function getMyInboxSize() public view returns (uint) {
     return ( userInboxes[msg.sender].numReceivedMessages);
