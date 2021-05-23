@@ -80,8 +80,7 @@ class Login extends Component {
 
                 <Button variant="primary" type="submit" onClick = {this.handleValidate}> Login/Register </Button>             
             </Form>
-            {redirect && <Link to="/inbox">
-                  </Link>}
+           
             </div>
         );
     }
