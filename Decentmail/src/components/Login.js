@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {Badge, Button, Form} from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import web3 from '../utils/web3';
 import contract from '../utils/contract';
 import "./Login.css"
@@ -12,7 +12,7 @@ class Login extends Component {
         this.state = {
           email : '',
           account : '',
-          redirect : true,
+          redirect : false,
         };
         this.handleValidate= this.handleValidate.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -50,13 +50,15 @@ class Login extends Component {
         
               })
             }
-            this.setState({redirect:true})
         })
+        this.setState({redirect:true});
 
 
     }
     render() {
-        const { redirect } = this.state;
+        if (this.state.redirect) {
+          return <Redirect to= "/inbox" />
+        }
         return (
             <div className= "col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">
             <Form>
