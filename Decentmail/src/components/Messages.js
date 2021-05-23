@@ -1,4 +1,6 @@
 import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 import {Table, Modal, Button} from 'react-bootstrap';
 import web3 from '../utils/web3';
 import ipfs from '../utils/ipfs';

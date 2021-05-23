@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import {Badge, Button, Form} from 'react-bootstrap';
-
 import { Link } from 'react-router-dom';
 import web3 from '../utils/web3';
 import contract from '../utils/contract';
-
 import "./Login.css"
+
 class Login extends Component {
     constructor(props) {
         super(props);
