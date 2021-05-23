@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import web3 from './web3';
 
 
-const address = '0xf625A078fbf29F4D87c6B7D8c40c422F7232d43d';
+const address = '0xd6A5816d0a9327BA1CFEC0E227D5CCcCAd621a3f';
 const abi = [
   {
     "anonymous": false,
@@ -77,7 +77,13 @@ const abi = [
   },
   {
     "constant": true,
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
     "name": "getMail",
     "outputs": [
       {
@@ -150,9 +156,14 @@ const abi = [
     "constant": false,
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "string",
         "name": "_receiver",
-        "type": "address"
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_subject",
+        "type": "string"
       },
       {
         "internalType": "string",
@@ -198,9 +209,14 @@ const abi = [
         "type": "uint256"
       },
       {
-        "internalType": "address",
+        "internalType": "string",
         "name": "",
-        "type": "address"
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "payable": false,
@@ -237,6 +253,11 @@ const abi = [
         "internalType": "address",
         "name": "",
         "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "payable": false,
@@ -274,7 +295,6 @@ const abi = [
     "type": "function"
   }
 ]
-  
   const contract = new web3.eth.Contract(abi, address);
   console.log(contract);
   export default contract;

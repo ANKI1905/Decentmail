@@ -29,7 +29,7 @@ class Compose extends Component{
     }
     
     async checkRegistration(){
-      contract.methods.checkRegistration("helo").call(function(error, result){
+      contract.methods.checkRegistration("ankitamvaid12@gmail.com").call(function(error, result){
           if(error)
           {
             contract.methods.registerUser("ankitamvaid12@gmail.com").send({from : contract.defaultAccount},  function(error, result){
@@ -49,12 +49,7 @@ class Compose extends Component{
       })
     }
 
-    async register(){
-      contract.methods.registerUser().call(function(error, result){
-        console.log(result)
-
-      })
-    }
+   
     
     async getAccount(){
         const accounts = await web3.eth.getAccounts();
@@ -63,9 +58,11 @@ class Compose extends Component{
         contract.defaultAccount = accounts[0];
     }
    
-    handleSubmit(event) {
+    async handleSubmit(event) {
       event.preventDefault();
       var encrBuff = Buffer.from(this.state.message);
+      var rec_address = contract.methods.getAddress(this.state.receiver).call();
+      console.log(rec_address);
       ipfs.files.add(encrBuff, async (err, ipfsHash) => {
         this.setState({hash : ipfsHash[0].hash})
         console.log(err, "ipfsHash:: " + ipfsHash[0].hash);
@@ -76,6 +73,7 @@ class Compose extends Component{
       })
     }
     handleChange(e) {
+        
         this.setState({ [e.target.name] : e.target.value });
      }
      

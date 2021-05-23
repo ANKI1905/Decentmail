@@ -1,5 +1,4 @@
 import React from "react";
-import "/home/ankita/Documents/Decentmail/node_modules/bootstrap/dist/css/bootstrap.min.css";
 import {Table, Modal, Button} from 'react-bootstrap';
 import web3 from '../utils/web3';
 import ipfs from '../utils/ipfs';
@@ -48,32 +47,16 @@ class Messages extends React.Component {
     event.preventDefault();
     var index = event.target.value;
     this.setState({open : true});
-    console.log(index);
     var hash = this.state.messages[index][0];
     const result = await ipfs.files.cat(hash);
-    console.log(result.toString('utf-8'));
     this.setState({messagepop:result.toString('utf-8')});
-    console.log(this.state.messagepop);
   }
    
-
-  async getData(hash){
-    await  ipfs.files.cat(hash, (err, res) => {
-      console.log(res);
-      console.log(res.toString('utf-8'));
-     
-    });
-}
-
-
-  
-
   async getAccount(){
     const accounts = await web3.eth.getAccounts();
     this.setState({sender : accounts[0]});
     web3.eth.defaultAccount = accounts[0];
     contract.defaultAccount = accounts[0];
-    console.log(accounts[0]);
 }
 
   render() {

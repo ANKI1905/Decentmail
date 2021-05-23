@@ -43,7 +43,7 @@ class Login extends Component {
             console.log(email);
             if(error)
             {
-              contract.methods.registerUser(email).send({from : contract.defaultAccount},  function(error, result){
+              contract.methods.registerUser(email).send({from:contract.defaultAccount},  function(error, result){
                 if(!error) 
                   alert("User registered successfully")
                 else
@@ -51,7 +51,7 @@ class Login extends Component {
         
               })
             }
-            //this.setState({redirect:true})
+            this.setState({redirect:true})
         })
 
 

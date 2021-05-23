@@ -1,6 +1,5 @@
 import React from "react";
 import {Table, Modal, Button} from 'react-bootstrap';
-import "/home/ankita/Documents/Decentmail/node_modules/bootstrap/dist/css/bootstrap.min.css";
 import web3 from '../utils/web3';
 import ipfs from '../utils/ipfs';
 import contract from '../utils/contract';
