@@ -60,7 +60,10 @@ class Compose extends Component{
       console.log(this.state.message.length);
       //console.log(this.state.buffer + encrBuff);
       var list = [encrBuff, this.state.buffer];
-      var data = Buffer.concat(list);
+      if(this.state.buffer != '')
+        var data = Buffer.concat(list);
+      else
+        var data = encrBuff;
       var mge = data.slice(0, 3)
       console.log(data);
       console.log(mge.toString())
@@ -69,9 +72,19 @@ class Compose extends Component{
         console.log(err, "ipfsHash:: " + ipfsHash[0].hash);
         contract.methods.sendMessage(this.state.receiver, this.state.subject, this.state.message.length, ipfsHash[0].hash, "passwoerd").send({from : contract.defaultAccount}, function(error, result){
           console.log(result);
-          alert("Sent");
+         
         })
+        this.setState({receiver : ''})
+        this.setState({cc : ''})
+        this.setState({subject: ''})  
+        this.setState({message : ''})
+        this.setState({hash : ''})
+        this.setState({buffer:''})
       })
+
+    }
+    handleform(){
+    
     }
     handleChange(e) {
         

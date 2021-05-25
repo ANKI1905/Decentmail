@@ -38,9 +38,10 @@ class Login extends Component {
         console.log(this.state.email);
         var email = this.state.email;
 
-        contract.methods.checkRegistration(this.state.email).call(function(error, result){
-            console.log(email);
-            if(error)
+       var result = await contract.methods.checkRegistration(this.state.email).call();
+
+            console.log(result);
+            if(!result)
             {
               contract.methods.registerUser(email).send({from:contract.defaultAccount},  function(error, result){
                 if(!error) 
@@ -50,8 +51,11 @@ class Login extends Component {
         
               })
             }
-        })
-        this.setState({redirect:true});
+            else{
+              this.setState({redirect:true})
+            }
+            
+      
 
 
     }

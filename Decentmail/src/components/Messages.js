@@ -17,9 +17,14 @@ class Messages extends React.Component {
       sender :'',
       open : false,
       messagepop: '',
+      index : '',
+      filebuf:'',
+      filename:'',
+      attach: true,
     };
     this.handleClose = this.handleClose.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleFile = this.handleFile.bind(this);
   }
 
   async componentDidMount(){
@@ -44,25 +49,33 @@ class Messages extends React.Component {
   handleClose(e){
     this.setState({open:false});
     this.setState({messagepop:""})
+    this.setState({filebuf:""})
+    this.setState({attach:true})
   }
-
+   handleFile = async() => {
+     let file = this.state.filebuf;
+    var blob=new Blob([file],{type:"application/octet-stream;"});
+    FileSaver.saveAs(blob,"attach");
+   }
   handleClick = async(event)  => {
     let fname = "attached";
     event.preventDefault();
     var index = event.target.value;
+    this.setState({index : index});
     this.setState({open : true});
     var hash = this.state.messages[index][0];
     const result = await ipfs.files.cat(hash);
     console.log(result);
     const message = result.slice(0, this.state.messages[index][5]);
     const file = result.slice(this.state.messages[index][5]);
-
-
-    var blob=new Blob([file],{type:"application/octet-stream;"});
-    FileSaver.saveAs(blob,fname);
+    if(file.length){
+       this.setState({attach:false})
+       this.setState({filebuf:file})
+    }
     this.setState({messagepop:message.toString('utf-8')});
     console.log(this.state.messagepop);
   }
+  
    
   async getAccount(){
     const accounts = await web3.eth.getAccounts();
@@ -101,7 +114,7 @@ class Messages extends React.Component {
     </Table>
     <Modal show={this.state.open} onHide={this.handleClose} animation={false} data = {this.state.messagepop}>
         <Modal.Header closeButton>
-          <Modal.Title>Mail</Modal.Title>
+          <Modal.Title>Inbox</Modal.Title>
         </Modal.Header>
         <Modal.Body>{this.state.messagepop.split('\n').map(function(item, key) {
   return (
@@ -115,6 +128,7 @@ class Messages extends React.Component {
           <Button variant="secondary" onClick={this.handleClose}>
             Close
           </Button>
+          <Button variant="secondary" disabled={this.state.attach} onClick={this.handleFile}>Download attachment</Button>
           
         </Modal.Footer>
       </Modal>
