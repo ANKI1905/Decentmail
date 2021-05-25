@@ -7,6 +7,7 @@ import ipfs from '../utils/ipfs';
 import contract from '../utils/contract';
 import "./styles.css";
 
+const FileSaver=require('file-saver');
 class Messages extends React.Component {
   constructor(props) {
     super(props);
@@ -46,12 +47,21 @@ class Messages extends React.Component {
   }
 
   handleClick = async(event)  => {
+    let fname = "attached";
     event.preventDefault();
     var index = event.target.value;
     this.setState({open : true});
     var hash = this.state.messages[index][0];
     const result = await ipfs.files.cat(hash);
-    this.setState({messagepop:result.toString('utf-8')});
+    console.log(result);
+    const message = result.slice(0, this.state.messages[index][5]);
+    const file = result.slice(this.state.messages[index][5]);
+
+
+    var blob=new Blob([file],{type:"application/octet-stream;"});
+    FileSaver.saveAs(blob,fname);
+    this.setState({messagepop:message.toString('utf-8')});
+    console.log(this.state.messagepop);
   }
    
   async getAccount(){

@@ -15,40 +15,22 @@ class Compose extends Component{
                     cc : '', 
                     subject: '' , 
                     message : '',
-                    hash : ''
+                    hash : '',
+                    buffer:'',
        };
     
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.captureFile = this.captureFile.bind(this);
       }
     async componentDidMount(){
        await this.getAccount();
-       await this.checkRegistration();
-       await this.getProperties();
-       
-    }
-    
-    async checkRegistration(){
-      contract.methods.checkRegistration("ankitamvaid12@gmail.com").call(function(error, result){
-          if(error)
-          {
-            contract.methods.registerUser("ankitamvaid12@gmail.com").send({from : contract.defaultAccount},  function(error, result){
-              if(!error) 
-                alert("User registered successfully")
-              else
-                alert(error);
       
-            })
-          }
-      })
     }
     
-    async getProperties(){
-      contract.methods.getContractProperties().call(function(error, result){
-        console.log(result);
-      })
-    }
-
+    
+    
+  
    
     
     async getAccount(){
@@ -58,7 +40,7 @@ class Compose extends Component{
         contract.defaultAccount = accounts[0];
     }
    
-    async handleSubmit(event) {
+   /* async handleSubmit(event) {
       event.preventDefault();
       var encrBuff = Buffer.from(this.state.message);
       var rec_address = contract.methods.getAddress(this.state.receiver).call();
@@ -71,11 +53,44 @@ class Compose extends Component{
           alert("Sent");
         })
       })
+    }*/
+    async handleSubmit(event) {
+      event.preventDefault();
+      var encrBuff = Buffer.from(this.state.message);
+      console.log(this.state.message.length);
+      //console.log(this.state.buffer + encrBuff);
+      var list = [encrBuff, this.state.buffer];
+      var data = Buffer.concat(list);
+      var mge = data.slice(0, 3)
+      console.log(data);
+      console.log(mge.toString())
+      ipfs.files.add(data, async (err, ipfsHash) => {
+        this.setState({hash : ipfsHash[0].hash})
+        console.log(err, "ipfsHash:: " + ipfsHash[0].hash);
+        contract.methods.sendMessage(this.state.receiver, this.state.subject, this.state.message.length, ipfsHash[0].hash, "passwoerd").send({from : contract.defaultAccount}, function(error, result){
+          console.log(result);
+          alert("Sent");
+        })
+      })
     }
     handleChange(e) {
         
         this.setState({ [e.target.name] : e.target.value });
      }
+    captureFile = event => {
+      event.stopPropagation();
+      event.preventDefault();
+      window.file = event.target.files[0];
+      let reader = new window.FileReader();
+      reader.readAsArrayBuffer(window.file);
+      reader.onloadend = () => this.convertToBuffer(reader);
+    };
+  
+    convertToBuffer = async reader => {
+      const buffer = await Buffer.from(reader.result);
+      this.setState({ buffer: buffer });
+      console.log(this.state.buffer)
+    };
      
     render(){
         return(
@@ -110,6 +125,11 @@ class Compose extends Component{
                     <Col sm = {10}>
                     <Form.Control as="textarea" name = "message" value = {this.state.message} onChange= {this.handleChange}rows={5}/>
                    </Col>
+                  </Form.Group>
+
+                  
+                  <Form.Group>
+                    <Form.File id="exampleFormControlFile1" label="" onChange = {this.captureFile} />
                   </Form.Group>
                   <Button variant="primary" type="submit" onClick = {this.handleSubmit}>
                     Send

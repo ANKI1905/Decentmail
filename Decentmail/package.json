@@ -6,6 +6,7 @@
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "bootstrap": "^4.6.0",
+    "file-saver": "^2.0.5",
     "ipfs-api": "^26.1.2",
     "ipfs-core": "^0.5.4",
     "node-sass": "^4.14.1",
