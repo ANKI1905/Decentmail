@@ -3,6 +3,7 @@ import {Badge, Button, Form} from 'react-bootstrap';
 import { Link, Redirect } from 'react-router-dom';
 import web3 from '../utils/web3';
 import contract from '../utils/contract';
+import Userprofile from '../utils/Userprofile'
 import "./Login.css"
 import logo from './logo.jpeg';
 
@@ -39,6 +40,7 @@ class Login extends Component {
         event.preventDefault();
         console.log(this.state.email);
         var email = this.state.email;
+        var account = this.state.account;
         window.login = false;
         contract.methods.checkRegistration(this.state.email).call(function(error, result){
           if(error){
@@ -51,6 +53,8 @@ class Login extends Component {
             })
           }
           else{
+            Userprofile.setEmail(email)
+            Userprofile.setAccount(account)
             login = true;
           }
         });

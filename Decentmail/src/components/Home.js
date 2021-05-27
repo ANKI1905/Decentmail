@@ -7,9 +7,9 @@ class Home extends Component{
     render(){
         return (
             <div className = "row">
-              <div class="col-sm-3">  <Sidebar/> </div>
+              <div class="col-sm-3">  <Sidebar  /> </div>
               <div class = "col-sm-9">
-                <Header/>
+                <Header email = {this.props.email} />
                 <Messages/>
             </div>
             </div>
