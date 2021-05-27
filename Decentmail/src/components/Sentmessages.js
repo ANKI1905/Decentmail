@@ -6,6 +6,8 @@ import web3 from '../utils/web3';
 import ipfs from '../utils/ipfs';
 import contract from '../utils/contract';
 import "./styles.css";
+const CryptoJS = require("crypto-js");
+const FileSaver=require('file-saver');
 
 class Sentmessages extends React.Component {
   constructor(props) {
@@ -15,10 +17,15 @@ class Sentmessages extends React.Component {
       messages :[], 
       sender :'',
       open: false,
-      messagepop: ""
+      messagepop: "",
+      index : '',
+      filebuf:'',
+      filename:'',
+      attach: true,
     };
     this.handleClick = this.handleClick.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.handleFile = this.handleFile.bind(this);
   }
 
   async componentDidMount(){
@@ -40,23 +47,46 @@ class Sentmessages extends React.Component {
   handleClose(e){
     this.setState({open:false});
     this.setState({messagepop:""})
+    this.setState({filebuf:""})
+    this.setState({attach:true})
+  }
+  handleFile = async() => {
+    let file = this.state.filebuf;
+    var blob=new Blob([file],{type:"application/octet-stream;"});
+    FileSaver.saveAs(blob,"attach");
   }
 
   handleClick = async(event)  => {
     event.preventDefault();
     var index = event.target.value;
+    this.setState({index : index});
     this.setState({open : true});
     var hash = this.state.messages[index][0];
+    var key = this.state.messages[index][1];
     const result = await ipfs.files.cat(hash);
-    this.setState({messagepop:result.toString('utf-8')});
+    var mes = result.slice(0, this.state.messages[index][5])
+    var file = result.slice( this.state.messages[index][5])
+    var bytes = mes.toString('utf-8');
+    var reb64 = CryptoJS.enc.Hex.parse(bytes);
+   var byte = reb64.toString(CryptoJS.enc.Base64);
+   var decrypt = CryptoJS.AES.decrypt(byte, key);
+   var plain = decrypt.toString(CryptoJS.enc.Utf8);
+  
+   window.plaintext = plain
+
+    console.log(file);
+   
+   
+    if(file.length){
+
+       this.setState({attach:false})
+       this.setState({filebuf:file})
+    }
+    this.setState({messagepop:window.plaintext});
   }
    
-  async getData(hash){
-    await  ipfs.files.cat(hash, (err, res) => {
-      console.log(res);
-      console.log(res.toString('utf-8'))
-  });
-}
+
+
   
 
   async getAccount(){
@@ -111,7 +141,8 @@ class Sentmessages extends React.Component {
           <Button variant="secondary" onClick={this.handleClose}>
             Close
           </Button>
-          
+          <Button variant="secondary" disabled={this.state.attach} onClick={this.handleFile}>Download attachment</Button>
+         
         </Modal.Footer>
       </Modal>
 

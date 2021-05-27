@@ -4,7 +4,9 @@ import { Link, Redirect } from 'react-router-dom';
 import web3 from '../utils/web3';
 import contract from '../utils/contract';
 import "./Login.css"
+import logo from './logo.jpeg';
 
+var login = false;
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -37,40 +39,38 @@ class Login extends Component {
         event.preventDefault();
         console.log(this.state.email);
         var email = this.state.email;
-
-       var result = await contract.methods.checkRegistration(this.state.email).call();
-
-            console.log(result);
-            if(!result)
-            {
-              contract.methods.registerUser(email).send({from:contract.defaultAccount},  function(error, result){
-                if(!error) 
-                  alert("User registered successfully")
-                else
-                  alert(error);
-        
-              })
-            }
-            else{
-              this.setState({redirect:true})
-            }
-            
+        window.login = false;
+        contract.methods.checkRegistration(this.state.email).call(function(error, result){
+          if(error){
+            contract.methods.registerUser(email).send({from:contract.defaultAccount},  function(error, result){
+              if(!error) 
+                alert("User registered successfully")
+              else
+                alert(error);
       
-
+            })
+          }
+          else{
+            login = true;
+          }
+        });
+        if(login){
+          console.log("here");
+          this.setState({redirect:true})
+        }
+       
 
     }
     render() {
         if (this.state.redirect) {
-          return <Redirect to= "/inbox" />
-        }
+        
+        return <Redirect to= {{pathname: "/inbox",
+          account: this.state.account, email : this.state.email}}/> }
         return (
             <div className= "col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">
+            <img src={logo} alt="Logo" />
             <Form>
-                 <h4><Badge variant = "primary">Login/register</Badge></h4>
                   <Form.Group  controlId="formHorizontalEmail">
-                    <Form.Label >
-                      Email
-                    </Form.Label>
                    
                       <Form.Control type="text" placeholder="Email" name = "email" onChange = {this.handleChange} />
                    

@@ -10,6 +10,7 @@ contract DecentMail{
     string key;
     uint timestamp;
     address receiver;
+    string filename;
   }
   struct ContractProperties {
     address User;
@@ -67,7 +68,7 @@ contract DecentMail{
   function getContractProperties() public view returns (address, address[] memory ) {
     return (contractProperties.User, contractProperties.registeredUsersAddress);
   }
-  function sendMessage(string memory  _receiver,  string memory _subject, uint _message, string memory  _hash,  string memory _key) public {
+  function sendMessage(string memory  _receiver,  string memory _subject, uint _message, string memory  _hash,  string memory _key, string memory _filename) public {
     require(addresses[_receiver].isRegistered == true);
     newMessage.hash = _hash;
     newMessage.key = _key;
@@ -76,6 +77,7 @@ contract DecentMail{
     newMessage.sender = msg.sender;
     newMessage.receiver = getAddress(_receiver);
     newMessage.subject = _subject;
+    newMessage.filename = _filename;
     Sentbox storage sendermessages = userSentboxes[msg.sender];
     sendermessages.sentMessages[sendermessages.numSentMessages] = newMessage;
     sendermessages.numSentMessages++;
@@ -85,17 +87,17 @@ contract DecentMail{
     
     emit sendMessageEvent(msg.sender, newMessage.receiver, _hash, _key);
   }
-  function receiveMessages(uint index) public view returns ( string memory,  string memory, uint, string memory, string memory, uint) {
+  function receiveMessages(uint index) public view returns ( string memory,  string memory, uint, string memory, string memory, uint, string memory) {
     require (index >= 0);
     Inbox storage receiversInbox = userInboxes[msg.sender];
     Message memory message = receiversInbox.receivedMessages[index];
-    return (message.hash, message.key, message.timestamp, getMail(message.sender), message.subject, message.message);
+    return (message.hash, message.key, message.timestamp, getMail(message.sender), message.subject, message.message, message.filename);
   }
-  function sentMessages(uint index) public view returns ( string memory, string memory, uint, string memory, string memory, uint) {
+  function sentMessages(uint index) public view returns ( string memory, string memory, uint, string memory, string memory, uint, string memory) {
     require(index >= 0);
     Sentbox storage sendermessages = userSentboxes[msg.sender];
     Message memory message = sendermessages.sentMessages[index];
-    return (message.hash, message.key, message.timestamp, getMail(message.receiver), message.subject, message.message);
+    return (message.hash, message.key, message.timestamp, getMail(message.receiver), message.subject, message.message, message.filename);
   }
   function getMyInboxSize() public view returns (uint) {
     return ( userInboxes[msg.sender].numReceivedMessages);

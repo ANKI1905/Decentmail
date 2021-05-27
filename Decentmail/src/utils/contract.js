@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import web3 from './web3';
 
 
-const address = '0xB20642e33814fceeE15253D6Dc98B6cBE65aBb8e';
+const address = '0xaFf4843c941619E865Cfce5bb2B8648e9cc50290';
 const abi = [
   {
     "anonymous": false,
@@ -179,6 +179,11 @@ const abi = [
         "internalType": "string",
         "name": "_key",
         "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_filename",
+        "type": "string"
       }
     ],
     "name": "sendMessage",
@@ -227,6 +232,11 @@ const abi = [
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "payable": false,
@@ -273,6 +283,11 @@ const abi = [
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "payable": false,

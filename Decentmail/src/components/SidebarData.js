@@ -23,11 +23,5 @@ export const SidebarData = [
     icon : <AiIcons.AiFillHome />,
     cName: 'nav-text'
   },
-  {
-    title: 'Favourites',
-    path: '/products',
-    icon: <FaIcons.FaCartPlus />,
-    cName: 'nav-text'
-  },
-
+  
 ];

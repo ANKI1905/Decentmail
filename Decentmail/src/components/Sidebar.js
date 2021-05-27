@@ -11,7 +11,7 @@ function Sidebar() {
 
   return (
     <>
-      <IconContext.Provider value={{ color: '#262626' }}>
+      <IconContext.Provider value={{ color: '#fff' }}>
       
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
        

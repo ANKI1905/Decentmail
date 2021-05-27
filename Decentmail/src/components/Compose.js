@@ -5,6 +5,8 @@ import Header from './Header';
 import ipfs from '../utils/ipfs';
 import contract from '../utils/contract';
 import {Form, Row, Col, Button, Badge}from 'react-bootstrap';
+const CryptoJS = require("crypto-js");
+var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz*&-%/!?*+=()";
 
 class Compose extends Component{
     constructor(props) {
@@ -17,6 +19,7 @@ class Compose extends Component{
                     message : '',
                     hash : '',
                     buffer:'',
+                    filename: '',
        };
     
         this.handleChange = this.handleChange.bind(this);
@@ -56,21 +59,28 @@ class Compose extends Component{
     }*/
     async handleSubmit(event) {
       event.preventDefault();
-      var encrBuff = Buffer.from(this.state.message);
-      console.log(this.state.message.length);
-      //console.log(this.state.buffer + encrBuff);
-      var list = [encrBuff, this.state.buffer];
-      if(this.state.buffer != '')
-        var data = Buffer.concat(list);
+  
+
+      window.key = this.genPassPhrase(8);
+      console.log("AES key " + window.key);
+      var aesEncrypted = CryptoJS.AES.encrypt(this.state.message, window.key).toString()
+      var e64 = CryptoJS.enc.Base64.parse(aesEncrypted);
+      var eHex = e64.toString(CryptoJS.enc.Hex);
+      console.log("aesEncrypted:: " + aesEncrypted);
+  
+      var encr = Buffer.from(eHex); 
+      var list = [encr, this.state.buffer]
+      this.setState({message : encr})
+      if(this.state.buffer.length)
+        var encrBuff = Buffer.concat(list)
       else
-        var data = encrBuff;
-      var mge = data.slice(0, 3)
-      console.log(data);
-      console.log(mge.toString())
-      ipfs.files.add(data, async (err, ipfsHash) => {
+        var encrBuff = encr
+      console.log(encr);     
+      ipfs.files.add(encrBuff, async (err, ipfsHash) => {
         this.setState({hash : ipfsHash[0].hash})
         console.log(err, "ipfsHash:: " + ipfsHash[0].hash);
-        contract.methods.sendMessage(this.state.receiver, this.state.subject, this.state.message.length, ipfsHash[0].hash, "passwoerd").send({from : contract.defaultAccount}, function(error, result){
+        console.log(this.state.filename);
+        contract.methods.sendMessage(this.state.receiver, this.state.subject, this.state.message.length, ipfsHash[0].hash, window.key, this.state.filename).send({from : contract.defaultAccount}, function(error, result){
           console.log(result);
          
         })
@@ -83,9 +93,16 @@ class Compose extends Component{
       })
 
     }
-    handleform(){
-    
-    }
+  
+    genPassPhrase = keyLength => {
+      var randomstring = "";
+  
+      for (var i = 0; i < keyLength; i++) {
+        var rnum = Math.floor(Math.random() * chars.length);
+        randomstring += chars.substring(rnum, rnum + 1);
+      }
+      return randomstring;
+    };
     handleChange(e) {
         
         this.setState({ [e.target.name] : e.target.value });
@@ -94,13 +111,15 @@ class Compose extends Component{
       event.stopPropagation();
       event.preventDefault();
       window.file = event.target.files[0];
+      console.log(window.file.name)
+      this.setState({filename: window.file.name})
       let reader = new window.FileReader();
       reader.readAsArrayBuffer(window.file);
       reader.onloadend = () => this.convertToBuffer(reader);
     };
   
     convertToBuffer = async reader => {
-      const buffer = await Buffer.from(reader.result);
+      const buffer = await Buffer.from(reader.result, 'ascii');
       this.setState({ buffer: buffer });
       console.log(this.state.buffer)
     };
@@ -120,7 +139,7 @@ class Compose extends Component{
                       To
                     </Form.Label>
                     <Col sm={10}>
-                      <Form.Control type="text" placeholder="Address" name = "receiver" onChange = {this.handleChange} />
+                      <Form.Control type="text" placeholder="Address" name = "receiver" value = {this.state.receiver} onChange = {this.handleChange} />
                     </Col>
                   </Form.Group>
 
@@ -129,7 +148,7 @@ class Compose extends Component{
                       Subject
                     </Form.Label>
                     <Col sm={10}>
-                      <Form.Control type="text" placeholder="Subject"  name = "subject" onChange = {this.handleChange}/>
+                      <Form.Control type="text" placeholder="Subject" value = {this.state.subject} name = "subject" onChange = {this.handleChange}/>
                     </Col>
                   </Form.Group>
                    
