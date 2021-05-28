@@ -21,6 +21,10 @@ class Header extends Component{
     handleLogOut(){
         
             this.setState({logout:true})
+            Userprofile.setLogin(false)
+            Userprofile.setAccount('');
+            Userprofile.setEmail('');
+            
             alert("For security, also remove account from metamask")
       
         
