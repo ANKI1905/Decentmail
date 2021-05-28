@@ -59,7 +59,10 @@ class Compose extends Component{
     }*/
     async handleSubmit(event) {
       event.preventDefault();
-  
+      var senderList = this.state.receiver;
+      var split_sender = senderList.split(" ");
+      console.log(split_sender[0]);
+      var length = split_sender.length;
 
       window.key = this.genPassPhrase(8);
       console.log("AES key " + window.key);
@@ -80,10 +83,13 @@ class Compose extends Component{
         this.setState({hash : ipfsHash[0].hash})
         console.log(err, "ipfsHash:: " + ipfsHash[0].hash);
         console.log(this.state.filename);
-        contract.methods.sendMessage(this.state.receiver, this.state.subject, this.state.message.length, ipfsHash[0].hash, window.key, this.state.filename).send({from : contract.defaultAccount}, function(error, result){
+        for(var i = 0; i < length; i++){
+        contract.methods.sendMessage(split_sender[i], this.state.subject, this.state.message.length, ipfsHash[0].hash, window.key, this.state.filename).send({from : contract.defaultAccount}, function(error, result){
           console.log(result);
+        
          
         })
+      }
         this.setState({receiver : ''})
         this.setState({cc : ''})
         this.setState({subject: ''})  

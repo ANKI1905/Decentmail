@@ -53,16 +53,18 @@ class Sentmessages extends React.Component {
   handleFile = async() => {
     let file = this.state.filebuf;
     var blob=new Blob([file],{type:"application/octet-stream;"});
-    FileSaver.saveAs(blob,"attach");
+    FileSaver.saveAs(blob,this.state.filename);
   }
 
   handleClick = async(event)  => {
+      
     event.preventDefault();
     var index = event.target.value;
     this.setState({index : index});
     this.setState({open : true});
     var hash = this.state.messages[index][0];
     var key = this.state.messages[index][1];
+    this.setState({filename:this.state.messages[index][6]})
     const result = await ipfs.files.cat(hash);
     var mes = result.slice(0, this.state.messages[index][5])
     var file = result.slice( this.state.messages[index][5])
@@ -103,7 +105,7 @@ class Sentmessages extends React.Component {
        <Table responsive="sm">
       <thead>
         <tr>
-          <th>From</th>
+          <th>To</th>
           <th>Subject</th>
           <th>Time</th>
           <th></th>
